@@ -1,0 +1,13 @@
+# OS Generated Files
+.DS_Store
+Thumbs.db
+
+# Editor Specific Files
+.vscode/
+.idea/
+
+# Environment / Sensitive Config Files (කාලෙකදී DB passwords තියෙන file එක නොයවන්න අවශ්‍ය වුවහොත්)
+# config/db.php
+
+# Log Files
+*.log
