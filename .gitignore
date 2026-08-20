@@ -6,8 +6,14 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Environment / Sensitive Config Files (කාලෙකදී DB passwords තියෙන file එක නොයවන්න අවශ්‍ය වුවහොත්)
+# Environment / Sensitive Config Files 
 # config/db.php
 
 # Log Files
 *.log
+
+# Dependencies / Libraries
+vendor/
+
+# User Uploaded Files (Blog images)
+uploads/
