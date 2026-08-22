@@ -66,7 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="form-group">
             <label for="content">Blog Content</label>
-            <!-- Render existing blog content inside textarea -->
             <textarea name="content" id="editor" rows="10"><?php echo htmlspecialchars($blog['content']); ?></textarea>
         </div>
 
@@ -74,11 +73,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
 </div>
 
-<!-- Include CKEditor 5 CDN -->
+<!-- Include CKEditor CDN -->
 <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 <script>
     ClassicEditor
         .create(document.querySelector('#editor'))
+        .then(editor => {
+            // Base64 Upload Adapter Configuration for Image Uploads
+            editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+                return {
+                    upload: () => loader.file.then(file => new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve({ default: reader.result });
+                        reader.onerror = error => reject(error);
+                        reader.readAsDataURL(file);
+                    }))
+                };
+            };
+        })
         .catch(error => {
             console.error(error);
         });
