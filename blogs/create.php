@@ -2,7 +2,6 @@
 require_once '../includes/header.php';
 require_once '../config/db.php';
 
-// Authorization Check: Redirect if user is not logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../auth/login.php");
     exit();
@@ -13,21 +12,18 @@ $errors = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title   = trim($_POST['title']);
     $content = trim($_POST['content']);
-    $user_id = $_SESSION['user_id'];
 
-    // Basic Validations
     if (empty($title) || empty($content)) {
-        $errors[] = "Title and Content cannot be empty.";
+        $errors[] = "Both title and content are required.";
     }
 
-    // Insert blog into database
     if (empty($errors)) {
         $stmt = $pdo->prepare("INSERT INTO blogPost (user_id, title, content) VALUES (?, ?, ?)");
-        if ($stmt->execute([$user_id, $title, $content])) {
-            header("Location: ../index.php?created=success");
+        if ($stmt->execute([$_SESSION['user_id'], $title, $content])) {
+            header("Location: my-blogs.php?created=success");
             exit();
         } else {
-            $errors[] = "Failed to create blog post. Please try again.";
+            $errors[] = "Failed to publish blog post.";
         }
     }
 }
@@ -47,16 +43,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form action="create.php" method="POST">
         <div class="form-group">
             <label for="title">Blog Title</label>
-            <input type="text" name="title" id="title" required value="<?php echo isset($_POST['title']) ? htmlspecialchars($_POST['title']) : ''; ?>">
+            <input type="text" name="title" id="title" placeholder="Enter title" required>
         </div>
 
         <div class="form-group">
-            <label for="content">Blog Content (Markdown supported)</label>
-            <textarea name="content" id="markdown-editor" rows="10"><?php echo isset($_POST['content']) ? htmlspecialchars($_POST['content']) : ''; ?></textarea>
+            <label for="content">Blog Content</label>
+            <!-- Standard Textarea for CKEditor -->
+            <textarea name="content" id="editor" rows="10"></textarea>
         </div>
 
         <button type="submit">Publish Blog</button>
     </form>
 </div>
+
+<!-- Include CKEditor CDN -->
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+<script>
+    ClassicEditor
+        .create(document.querySelector('#editor'))
+        .catch(error => {
+            console.error(error);
+        });
+</script>
 
 <?php require_once '../includes/footer.php'; ?>

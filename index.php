@@ -2,7 +2,6 @@
 require_once 'includes/header.php';
 require_once 'config/db.php';
 
-// Fetch all blog posts with author usernames
 $stmt = $pdo->prepare("
     SELECT blogPost.*, user.username 
     FROM blogPost 
@@ -14,7 +13,7 @@ $blogs = $stmt->fetchAll();
 ?>
 
 <div class="home-container">
-    <h2>Latest Blog Posts</h2>
+    <h2 class="section-title">Latest Posts</h2>
 
     <?php if (isset($_GET['created']) && $_GET['created'] === 'success'): ?>
         <div class="success-box">Blog post created successfully!</div>
@@ -41,8 +40,8 @@ $blogs = $stmt->fetchAll();
                     </p>
                     <p class="blog-excerpt">
                         <?php 
-                            $excerpt = substr(strip_tags($blog['content']), 0, 150);
-                            echo htmlspecialchars($excerpt) . (strlen($blog['content']) > 150 ? '...' : '');
+                            $excerpt = substr(strip_tags($blog['content']), 0, 140);
+                            echo htmlspecialchars($excerpt) . (strlen($blog['content']) > 140 ? '...' : '');
                         ?>
                     </p>
                     <a href="blogs/view.php?id=<?php echo $blog['id']; ?>" class="read-more">Read More &rarr;</a>

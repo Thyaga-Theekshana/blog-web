@@ -2,7 +2,6 @@
 session_start();
 require_once '../config/db.php';
 
-// Redirect user if already logged in
 if (isset($_SESSION['user_id'])) {
     header("Location: ../index.php");
     exit();
@@ -24,19 +23,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errors)) {
-        // Fetch user by username or email
         $stmt = $pdo->prepare("SELECT * FROM user WHERE username = ? OR email = ?");
         $stmt->execute([$usernameOrEmail, $usernameOrEmail]);
         $user = $stmt->fetch();
 
-        // Verify password
         if ($user && password_verify($password, $user['password'])) {
-            // Set session variables
             $_SESSION['user_id']  = $user['id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['role']     = $user['role'];
 
-            header("Location: ../index.php");
+            header("Location: ../blogs/my-blogs.php");
             exit();
         } else {
             $errors[] = "Invalid username/email or password.";
@@ -50,12 +46,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Blog App</title>
+    <title>Login - WriteWave</title>
     <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
-    <div class="auth-container">
-        <h2>User Login</h2>
+<body class="auth-body">
+
+    <div class="auth-card">
+        <div class="auth-header">
+            <span class="brand-symbol">◆</span>
+            <h2>WriteWave</h2>
+            <h1>Welcome Back</h1>
+            <p>Sign in to your account to continue</p>
+        </div>
 
         <?php if (!empty($successMessage)): ?>
             <div class="success-box">
@@ -73,19 +76,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <form action="login.php" method="POST">
             <div class="form-group">
-                <label for="username_email">Username or Email</label>
-                <input type="text" name="username_email" id="username_email" required>
+                <label for="username_email">Email Address or Username</label>
+                <input type="text" name="username_email" id="username_email" placeholder="your@email.com" required>
             </div>
 
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" name="password" id="password" required>
+                <div class="password-wrapper">
+                    <!-- Placeholder fixed to "Your password" -->
+                    <input type="password" name="password" id="password" placeholder="Your password" required>
+                    <!-- Initial icon set to fa-eye for hidden password -->
+                    <i class="fa-solid fa-eye" id="togglePassword"></i>
+                </div>
             </div>
 
-            <button type="submit">Login</button>
+            <button type="submit" class="btn-auth">Sign In</button>
         </form>
 
-        <p>Don't have an account? <a href="register.php">Register here</a></p>
+        <p class="auth-footer">Don't have an account? <a href="register.php">Create one</a></p>
     </div>
+
+    <script>
+        const togglePassword = document.querySelector('#togglePassword');
+        const password = document.querySelector('#password');
+
+        togglePassword.addEventListener('click', function () {
+            // Toggle input type between password and text
+            const isPassword = password.getAttribute('type') === 'password';
+            password.setAttribute('type', isPassword ? 'text' : 'password');
+            
+            // Hidden (password) -> fa-eye, Visible (text) -> fa-eye-slash
+            this.classList.toggle('fa-eye', !isPassword);
+            this.classList.toggle('fa-eye-slash', isPassword);
+        });
+    </script>
 </body>
 </html>
