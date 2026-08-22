@@ -13,9 +13,17 @@ $stmt->execute();
 $blogs = $stmt->fetchAll();
 ?>
 
-<div class="home-container">
-    <h2>Latest Blog Posts</h2>
+<!-- Compact Header Section -->
+<section class="workspace-header">
+    <div class="workspace-inner" style="flex-direction: column; align-items: center; text-align: center; gap: 8px;">
+        <h1 class="workspace-title">Latest Stories</h1>
+        <p class="workspace-sub">Explore insights, tutorials, and perspectives from our community.</p>
+    </div>
+</section>
 
+<div class="divider"></div>
+
+<div class="home-container">
     <?php if (isset($_GET['created']) && $_GET['created'] === 'success'): ?>
         <div class="success-box">Blog post created successfully!</div>
     <?php endif; ?>
@@ -25,11 +33,18 @@ $blogs = $stmt->fetchAll();
     <?php endif; ?>
 
     <?php if (empty($blogs)): ?>
-        <p>No blogs published yet. Be the first to write one!</p>
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fa-regular fa-folder-open" style="font-size: 3rem;"></i>
+            </div>
+            <h3>No blogs published yet</h3>
+            <p>The feed is currently empty. Check back later for new stories.</p>
+        </div>
     <?php else: ?>
         <div class="blog-grid">
             <?php foreach ($blogs as $blog): ?>
                 <div class="blog-card">
+                    <div class="card-badge">Story</div>
                     <h3>
                         <a href="blogs/view.php?id=<?php echo $blog['id']; ?>">
                             <?php echo htmlspecialchars($blog['title']); ?>
@@ -37,7 +52,7 @@ $blogs = $stmt->fetchAll();
                     </h3>
                     <p class="blog-meta">
                         By <strong><?php echo htmlspecialchars($blog['username']); ?></strong> 
-                        on <?php echo date('M d, Y', strtotime($blog['created_at'])); ?>
+                        &middot; <?php echo date('M d, Y', strtotime($blog['created_at'])); ?>
                     </p>
                     <p class="blog-excerpt">
                         <?php 
@@ -45,7 +60,9 @@ $blogs = $stmt->fetchAll();
                             echo htmlspecialchars($excerpt) . (strlen($blog['content']) > 150 ? '...' : '');
                         ?>
                     </p>
-                    <a href="blogs/view.php?id=<?php echo $blog['id']; ?>" class="read-more">Read More &rarr;</a>
+                    <div class="card-footer">
+                        <a href="blogs/view.php?id=<?php echo $blog['id']; ?>" class="read-more">Read Article &rarr;</a>
+                    </div>
                 </div>
             <?php endforeach; ?>
         </div>
