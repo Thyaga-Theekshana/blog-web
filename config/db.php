@@ -1,9 +1,9 @@
 <?php
 // Database Credentials
-$host     = 'localhost';
-$db_name  = 'blog_db';
-$username = 'root';
-$password = ''; // XAMPP default password is empty
+$host     = 'sql209.infinityfree.com';
+$db_name  = 'if0_42719967_XXX';
+$username = 'if0_42719967';
+$password = 'Kemis103224'; 
 
 try {
     // PDO Connection 
